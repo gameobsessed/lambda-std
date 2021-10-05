@@ -1,6 +1,6 @@
 {
   "name": "lambda-std",
-  "description": "Lambda Simple Toolbox based on Decorators",
+  "description": "Lambda Simple Toolkit based on Decorators",
   "version": "0.1.0",
   "private": false,
   "license": "MIT",
