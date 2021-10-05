@@ -1,0 +1,10 @@
+import { Context } from 'aws-lambda';
+import { ConfigurationStorage } from './configurator/configuration-storage';
+export declare function getConfigurationStorage(): ConfigurationStorage;
+export declare function caller<T, R>(input: unknown): (event: T, context?: Context | undefined) => Promise<R>;
+export * from './configurator/configuration-storage';
+export * from './decorators/controller';
+export * from './decorators/handler';
+export * from './decorators/initializer';
+export * from './decorators/param';
+export * from './decorators/validator';

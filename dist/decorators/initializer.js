@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Initializer = void 0;
+const __1 = require("..");
+function Initializer(object, methodName, 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+descriptor) {
+    (0, __1.getConfigurationStorage)().addInitializer({
+        object,
+        methodName,
+    });
+}
+exports.Initializer = Initializer;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiaW5pdGlhbGl6ZXIuanMiLCJzb3VyY2VSb290Ijoic3JjLyIsInNvdXJjZXMiOlsiZGVjb3JhdG9ycy9pbml0aWFsaXplci50cyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7QUFBQSwwQkFBNEM7QUFFNUMsU0FBZ0IsV0FBVyxDQUN6QixNQUFjLEVBQ2QsVUFBMkI7QUFDM0IsNkRBQTZEO0FBQzdELFVBQThCO0lBRTlCLElBQUEsMkJBQXVCLEdBQUUsQ0FBQyxjQUFjLENBQUM7UUFDdkMsTUFBTTtRQUNOLFVBQVU7S0FDWCxDQUFDLENBQUE7QUFDSixDQUFDO0FBVkQsa0NBVUMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgeyBnZXRDb25maWd1cmF0aW9uU3RvcmFnZSB9IGZyb20gJy4uJ1xuXG5leHBvcnQgZnVuY3Rpb24gSW5pdGlhbGl6ZXIoXG4gIG9iamVjdDogT2JqZWN0LFxuICBtZXRob2ROYW1lOiBzdHJpbmcgfCBzeW1ib2wsXG4gIC8vIGVzbGludC1kaXNhYmxlLW5leHQtbGluZSBAdHlwZXNjcmlwdC1lc2xpbnQvbm8tdW51c2VkLXZhcnNcbiAgZGVzY3JpcHRvcjogUHJvcGVydHlEZXNjcmlwdG9yXG4pIHtcbiAgZ2V0Q29uZmlndXJhdGlvblN0b3JhZ2UoKS5hZGRJbml0aWFsaXplcih7XG4gICAgb2JqZWN0LFxuICAgIG1ldGhvZE5hbWUsXG4gIH0pXG59XG4iXX0=
