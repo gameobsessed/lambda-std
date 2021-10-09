@@ -72,7 +72,10 @@ export function DetailType(options?: IDetailOptions) {
   }
 }
 
-export function Argument(argumentName: string, options?: IDetailOptions) {
+export function Arguments(
+  argumentName: string | undefined = undefined,
+  options?: IDetailOptions
+) {
   return function (
     object: Object,
     methodName: string | symbol,
@@ -96,7 +99,9 @@ export function Argument(argumentName: string, options?: IDetailOptions) {
       parse: options?.parse ?? true,
       targetType,
       async resolve(event: AppSyncResolverEvent<any>) {
-        let arg: any = event.arguments[argumentName]
+        let arg: any = argumentName
+          ? event.arguments[argumentName]
+          : event.arguments
 
         const validated = validatorConfig
           ? validatorConfig.schema.validateSync(arg, {
