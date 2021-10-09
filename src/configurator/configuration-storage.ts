@@ -1,7 +1,7 @@
 import { Context } from 'aws-lambda'
 import { AnyObjectSchema } from 'yup'
 
-export type ParamType = 'detail' | 'detailType'
+export type ParamType = 'detail' | 'detailType' | 'argument'
 
 export interface IParamConfiguration {
   type: ParamType
@@ -16,12 +16,14 @@ export interface IParam<T, R> extends IParamConfiguration {
   resolve(event: T, context: Context): Promise<R>
 }
 
-export type HandlerType = 'handler'
+export type HandlerType = 'handler' | 'query'
 
 export interface IHandlerConfiguration {
   type: HandlerType
   object: Object
   methodName: string | symbol
+  route?: string | symbol
+  options?: Record<string, any>
 }
 
 export interface IInitializerConfiguration {
@@ -37,7 +39,7 @@ export interface IValidatorConfiguration {
 
 export class ConfigurationStorage {
   controllers: any[] = []
-  handlers: IHandlerConfiguration[] = []
+  handlers: Map<Object, Map<string | symbol, IHandlerConfiguration>> = new Map()
   params: IParam<any, any>[] = []
   errorHandlers: any[] = []
   initializers: IInitializerConfiguration[] = []
@@ -48,7 +50,13 @@ export class ConfigurationStorage {
   }
 
   addHandler(handler: IHandlerConfiguration) {
-    this.handlers.push(handler)
+    const { route = 'default', object } = handler
+    const constructor = object.constructor
+    const controllerHandlers = this.handlers.has(constructor)
+      ? this.handlers.get(constructor)!
+      : new Map<string | symbol, IHandlerConfiguration>()
+    controllerHandlers.set(route, handler)
+    this.handlers.set(constructor, controllerHandlers)
   }
 
   addInitializer(initializer: IInitializerConfiguration) {
@@ -59,10 +67,14 @@ export class ConfigurationStorage {
     this.validators.push(validator)
   }
 
-  findHandler(object: Object) {
-    return this.handlers.find(
-      (handler) => handler.object.constructor === object
-    )
+  findHandler(object: Object, route: string = 'default') {
+    const controllerHandlers = this.handlers.get(object)
+
+    if (!controllerHandlers) {
+      return undefined
+    }
+
+    return controllerHandlers.get(route)
   }
 
   findInitializer(object: Object) {

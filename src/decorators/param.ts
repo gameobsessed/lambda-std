@@ -1,5 +1,5 @@
 import { plainToClass } from 'class-transformer'
-import { EventBridgeEvent } from 'aws-lambda'
+import { EventBridgeEvent, AppSyncResolverEvent } from 'aws-lambda'
 import { getConfigurationStorage } from '..'
 
 export interface IDetailOptions {
@@ -67,6 +67,47 @@ export function DetailType(options?: IDetailOptions) {
       parameterIndex,
       resolve(event: EventBridgeEvent<any, any>) {
         return event['detail-type']
+      },
+    })
+  }
+}
+
+export function Argument(argumentName: string, options?: IDetailOptions) {
+  return function (
+    object: Object,
+    methodName: string | symbol,
+    parameterIndex: number
+  ) {
+    const types = (Reflect as any).getMetadata(
+      'design:paramtypes',
+      object,
+      methodName
+    )
+    const targetType = types?.[parameterIndex]
+    const configurationStorage = getConfigurationStorage()
+    const validatorConfig =
+      targetType && configurationStorage.findValidator(targetType)
+
+    configurationStorage.addParam({
+      type: 'argument',
+      object,
+      methodName,
+      parameterIndex,
+      parse: options?.parse ?? true,
+      targetType,
+      async resolve(event: AppSyncResolverEvent<any>) {
+        let arg: any = event.arguments[argumentName]
+
+        const validated = validatorConfig
+          ? validatorConfig.schema.validateSync(arg, {
+              abortEarly: false,
+              stripUnknown: true,
+            })
+          : arg
+
+        const obj = targetType ? plainToClass(targetType, validated) : arg
+
+        return obj
       },
     })
   }

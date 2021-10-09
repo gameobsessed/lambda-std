@@ -1,6 +1,6 @@
 import { Context } from 'aws-lambda';
 import { AnyObjectSchema } from 'yup';
-export declare type ParamType = 'detail' | 'detailType';
+export declare type ParamType = 'detail' | 'detailType' | 'argument';
 export interface IParamConfiguration {
     type: ParamType;
     object: Object;
@@ -12,11 +12,13 @@ export interface IParamConfiguration {
 export interface IParam<T, R> extends IParamConfiguration {
     resolve(event: T, context: Context): Promise<R>;
 }
-export declare type HandlerType = 'handler';
+export declare type HandlerType = 'handler' | 'query';
 export interface IHandlerConfiguration {
     type: HandlerType;
     object: Object;
     methodName: string | symbol;
+    route?: string | symbol;
+    options?: Record<string, any>;
 }
 export interface IInitializerConfiguration {
     object: Object;
@@ -29,7 +31,7 @@ export interface IValidatorConfiguration {
 }
 export declare class ConfigurationStorage {
     controllers: any[];
-    handlers: IHandlerConfiguration[];
+    handlers: Map<Object, Map<string | symbol, IHandlerConfiguration>>;
     params: IParam<any, any>[];
     errorHandlers: any[];
     initializers: IInitializerConfiguration[];
@@ -38,7 +40,7 @@ export declare class ConfigurationStorage {
     addHandler(handler: IHandlerConfiguration): void;
     addInitializer(initializer: IInitializerConfiguration): void;
     addValidator(validator: IValidatorConfiguration): void;
-    findHandler(object: Object): IHandlerConfiguration | undefined;
+    findHandler(object: Object, route?: string): IHandlerConfiguration | undefined;
     findInitializer(object: Object): IInitializerConfiguration | undefined;
     findParams(object: Object, methodName: string | symbol): IParam<any, any>[];
     findValidator(object: Object): IValidatorConfiguration | undefined;
