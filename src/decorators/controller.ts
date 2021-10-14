@@ -1,5 +1,5 @@
-import { Context, AppSyncResolverEvent } from 'aws-lambda'
-import { getConfigurationStorage } from '..'
+import { Context, AppSyncResolverEvent, EventBridgeEvent } from 'aws-lambda'
+import { ConfigurationStorage, getConfigurationStorage } from '..'
 
 export function Controller<T>(Wrapper: any) {
   const configStorage = getConfigurationStorage()
@@ -38,34 +38,51 @@ export function Controller<T>(Wrapper: any) {
   } as any
 }
 
-export function AppSyncResolverEventController(Wrapper: any) {
-  const configStorage = getConfigurationStorage()
+export abstract class EventControllerClass<
+  W extends Record<string | symbol, any>,
+  E
+> {
+  private configStorage: ConfigurationStorage
+  private Wrapper: any
+  private wrapper: W
+  private initializer: any
+  private initialized: boolean = false
 
-  const initializerConfig = configStorage.findInitializer(Wrapper)
+  constructor(Wrapper: any) {
+    this.configStorage = getConfigurationStorage()
+    this.Wrapper = Wrapper
+    this.wrapper = new Wrapper()
+    const initializerConfig = this.configStorage.findInitializer(Wrapper)
+    this.initializer =
+      initializerConfig && this.wrapper[initializerConfig.methodName]
+  }
 
-  const wrapper = new Wrapper()
-  const initializer = initializerConfig && wrapper[initializerConfig.methodName]
+  abstract getHandlerMark(event: E): string
 
-  let initialized = false
-
-  return async function (event: AppSyncResolverEvent<any>, context: Context) {
-    if (!initialized && initializerConfig) {
-      await initializer.call(wrapper)
-      initialized = true
+  async handler(event: E, context: Context) {
+    if (!this.initialized && this.initializer) {
+      await this.initializer.call(this.wrapper)
+      this.initialized = true
     }
 
-    const { fieldName } = event.info
+    const handlerMark = this.getHandlerMark(event)
 
-    const handlerConfig = configStorage.findHandler(Wrapper, fieldName)
+    const handlerConfig = this.configStorage.findHandler(
+      this.Wrapper,
+      handlerMark
+    )
 
     if (!handlerConfig) {
       throw new Error(
-        `There is no handler for the ${fieldName} defined on the controller`
+        `There is no handler for the ${handlerMark} defined on the controller`
       )
     }
 
-    const handler = wrapper[handlerConfig.methodName]
-    const params = configStorage.findParams(Wrapper, handlerConfig.methodName)
+    const handler = this.wrapper[handlerConfig.methodName]
+    const params = this.configStorage.findParams(
+      this.Wrapper,
+      handlerConfig.methodName
+    )
 
     const args = []
 
@@ -74,9 +91,39 @@ export function AppSyncResolverEventController(Wrapper: any) {
         args[param.parameterIndex] = await param.resolve(event, context)
       }
 
-      return await handler.apply(wrapper, args)
+      return await handler.apply(this.wrapper, args)
     } catch (error) {
       console.error(error)
     }
-  } as any
+  }
+}
+
+export class EventBridgeEventControllerClass extends EventControllerClass<
+  any,
+  EventBridgeEvent<string, any>
+> {
+  getHandlerMark(event: EventBridgeEvent<any, any>) {
+    return event['detail-type']
+  }
+}
+
+export function EventBridgeEventController(Wrapper: any) {
+  const controller = new EventBridgeEventControllerClass(Wrapper)
+
+  return controller.handler.bind(controller) as any
+}
+
+export class AppSyncResolverEventControllerClass extends EventControllerClass<
+  any,
+  AppSyncResolverEvent<any, any>
+> {
+  getHandlerMark(event: AppSyncResolverEvent<any, any>) {
+    return event.info?.fieldName
+  }
+}
+
+export function AppSyncResolverEventController(Wrapper: any) {
+  const controller = new AppSyncResolverEventControllerClass(Wrapper)
+
+  return controller.handler.bind(controller) as any
 }

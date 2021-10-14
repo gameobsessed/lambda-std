@@ -17,7 +17,7 @@ export function Detail(options?: IDetailOptions) {
       object,
       methodName
     )
-    const targetType = types[parameterIndex]
+    const targetType = types?.[parameterIndex]
     const configurationStorage = getConfigurationStorage()
     const validatorConfig = configurationStorage.findValidator(targetType)
 
@@ -54,7 +54,7 @@ export function Detail(options?: IDetailOptions) {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export function DetailType(options?: IDetailOptions) {
+export function EventDetailType(options?: IDetailOptions) {
   return function (
     object: Object,
     methodName: string | symbol,

@@ -1,6 +1,6 @@
-import { AppSyncResolverEvent } from 'aws-lambda'
+import { AppSyncResolverEvent, EventBridgeEvent } from 'aws-lambda'
 import { caller } from '..'
-import { ProductController } from './controller.mock'
+import { Game, GameController, ProductController } from './controller.mock'
 
 describe('controller', () => {
   it('should create appsync controller', async () => {
@@ -19,5 +19,39 @@ describe('controller', () => {
     )(event)
 
     expect(result).toBe(id)
+  })
+
+  it('should create event bridge controller for update', async () => {
+    const game = {
+      id: 'gameId',
+    }
+    const event: Partial<EventBridgeEvent<any, any>> = {
+      'detail-type': 'GAME_UPDATED',
+      detail: JSON.stringify(game),
+    }
+
+    const result = await caller<any, { game: any; type: any }>(GameController)(
+      event
+    )
+
+    expect(result).toEqual({ ...game, status: 'validation' })
+    expect(result).toBeInstanceOf(Game)
+  })
+
+  it('should create event bridge controller for publish', async () => {
+    const game = {
+      id: 'gameId',
+    }
+    const event: Partial<EventBridgeEvent<any, any>> = {
+      'detail-type': 'GAME_PUBLISHED',
+      detail: JSON.stringify(game),
+    }
+
+    const result = await caller<any, { game: any; type: any }>(GameController)(
+      event
+    )
+
+    expect(result).toEqual({ ...game, status: 'published' })
+    expect(result).toBeInstanceOf(Game)
   })
 })
