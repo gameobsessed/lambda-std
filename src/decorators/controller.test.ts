@@ -27,7 +27,7 @@ describe('controller', () => {
     }
     const event: Partial<EventBridgeEvent<any, any>> = {
       'detail-type': 'GAME_UPDATED',
-      detail: JSON.stringify(game),
+      detail: game,
     }
 
     const result = await caller<any, { game: any; type: any }>(GameController)(
@@ -44,7 +44,7 @@ describe('controller', () => {
     }
     const event: Partial<EventBridgeEvent<any, any>> = {
       'detail-type': 'GAME_PUBLISHED',
-      detail: JSON.stringify(game),
+      detail: game,
     }
 
     const result = await caller<any, { game: any; type: any }>(GameController)(

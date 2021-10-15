@@ -26,17 +26,9 @@ export function Detail(options?: IDetailOptions) {
       object,
       methodName,
       parameterIndex,
-      parse: options?.parse ?? true,
       targetType,
       async resolve(event: EventBridgeEvent<any, any>) {
-        let parsed: any
-
-        try {
-          parsed = JSON.parse(event.detail)
-        } catch (e) {
-          // TODO: replace with custom errors
-          throw new Error('Body parsing error')
-        }
+        let parsed: any = event.detail
 
         const validated = validatorConfig
           ? validatorConfig.schema.validateSync(parsed, {
