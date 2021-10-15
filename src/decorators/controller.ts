@@ -60,6 +60,8 @@ export abstract class EventControllerClass<
   abstract getHandlerMark(event: E): string
 
   async handler(event: E, context: Context) {
+    console.debug('event: ', JSON.stringify(event, null, 2))
+
     if (!this.initialized && this.initializer) {
       await this.initializer.call(this.wrapper)
       this.initialized = true
