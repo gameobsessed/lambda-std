@@ -1,7 +1,7 @@
 {
   "name": "lambda-std",
   "description": "Lambda Simple Toolkit based on Decorators",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "private": false,
   "license": "MIT",
   "author": "Denis Zatsepin <denis@zatsepin.me>",
