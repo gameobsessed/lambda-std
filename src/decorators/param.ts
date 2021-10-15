@@ -45,7 +45,9 @@ export function Detail(options?: IDetailOptions) {
             })
           : parsed
 
-        const obj = targetType ? plainToClass(targetType, validated) : parsed
+        const obj = targetType
+          ? plainToClass(targetType, validated, { ignoreDecorators: true })
+          : parsed
 
         return obj
       },

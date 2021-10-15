@@ -93,6 +93,7 @@ export abstract class EventControllerClass<
 
       return await handler.apply(this.wrapper, args)
     } catch (error) {
+      // TODO: should be proper error handling mechanism depending on service
       console.error(error)
     }
   }
