@@ -17,6 +17,7 @@ export function Detail(options?: IDetailOptions) {
       object,
       methodName
     )
+    console.debug('detail types', JSON.stringify(types, null, 2))
     const targetType = types?.[parameterIndex]
     const configurationStorage = getConfigurationStorage()
     const validatorConfig = configurationStorage.findValidator(targetType)
@@ -37,6 +38,7 @@ export function Detail(options?: IDetailOptions) {
             })
           : parsed
 
+        console.debug('detail target type', targetType)
         const obj = targetType
           ? plainToClass(targetType, validated, { ignoreDecorators: true })
           : parsed
