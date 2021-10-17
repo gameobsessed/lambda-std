@@ -33,3 +33,19 @@ export function Query(fieldName?: string) {
     })
   }
 }
+
+export function Mutation(fieldName?: string) {
+  return function (
+    object: Object,
+    methodName: string | symbol,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    descriptor: PropertyDescriptor
+  ) {
+    getConfigurationStorage().addHandler({
+      type: 'mutation',
+      object,
+      methodName,
+      route: fieldName || methodName,
+    })
+  }
+}

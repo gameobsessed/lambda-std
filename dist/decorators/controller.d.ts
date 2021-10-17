@@ -7,14 +7,14 @@ export declare abstract class EventControllerClass<W extends Record<string | sym
     private initializer;
     private initialized;
     constructor(Wrapper: any);
-    abstract getHandlerMark(event: E): string;
+    abstract getHandlerName(event: E): string;
     handler(event: E, context: Context): Promise<any>;
 }
 export declare class EventBridgeEventControllerClass extends EventControllerClass<any, EventBridgeEvent<string, any>> {
-    getHandlerMark(event: EventBridgeEvent<any, any>): any;
+    getHandlerName(event: EventBridgeEvent<any, any>): any;
 }
 export declare function EventBridgeEventController(Wrapper: any): any;
 export declare class AppSyncResolverEventControllerClass extends EventControllerClass<any, AppSyncResolverEvent<any, any>> {
-    getHandlerMark(event: AppSyncResolverEvent<any, any>): string;
+    getHandlerName(event: AppSyncResolverEvent<any, any>): string;
 }
 export declare function AppSyncResolverEventController(Wrapper: any): any;

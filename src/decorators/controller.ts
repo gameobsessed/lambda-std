@@ -57,7 +57,7 @@ export abstract class EventControllerClass<
       initializerConfig && this.wrapper[initializerConfig.methodName]
   }
 
-  abstract getHandlerMark(event: E): string
+  abstract getHandlerName(event: E): string
 
   async handler(event: E, context: Context) {
     console.debug('event: ', JSON.stringify(event, null, 2))
@@ -67,16 +67,16 @@ export abstract class EventControllerClass<
       this.initialized = true
     }
 
-    const handlerMark = this.getHandlerMark(event)
+    const handlerName = this.getHandlerName(event)
 
     const handlerConfig = this.configStorage.findHandler(
       this.Wrapper,
-      handlerMark
+      handlerName
     )
 
     if (!handlerConfig) {
       throw new Error(
-        `There is no handler for the ${handlerMark} defined on the controller`
+        `There is no handler for the ${handlerName} defined on the controller`
       )
     }
 
@@ -105,7 +105,7 @@ export class EventBridgeEventControllerClass extends EventControllerClass<
   any,
   EventBridgeEvent<string, any>
 > {
-  getHandlerMark(event: EventBridgeEvent<any, any>) {
+  getHandlerName(event: EventBridgeEvent<any, any>) {
     return event['detail-type']
   }
 }
@@ -120,7 +120,7 @@ export class AppSyncResolverEventControllerClass extends EventControllerClass<
   any,
   AppSyncResolverEvent<any, any>
 > {
-  getHandlerMark(event: AppSyncResolverEvent<any, any>) {
+  getHandlerName(event: AppSyncResolverEvent<any, any>) {
     return event.info?.fieldName
   }
 }

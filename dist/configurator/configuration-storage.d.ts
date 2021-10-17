@@ -12,7 +12,7 @@ export interface IParamConfiguration {
 export interface IParam<T, R> extends IParamConfiguration {
     resolve(event: T, context: Context): Promise<R>;
 }
-export declare type HandlerType = 'handler' | 'query';
+export declare type HandlerType = 'handler' | 'query' | 'mutation';
 export interface IHandlerConfiguration {
     type: HandlerType;
     object: Object;
