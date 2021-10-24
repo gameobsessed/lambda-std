@@ -118,13 +118,33 @@ export function EventBody(extractor?: (record: any) => any) {
     methodName: string | symbol,
     parameterIndex: number
   ) {
+    const types = (Reflect as any).getMetadata(
+      'design:paramtypes',
+      object,
+      methodName
+    )
+    const targetType = types?.[parameterIndex]
+    const configurationStorage = getConfigurationStorage()
+    const validatorConfig =
+      targetType && configurationStorage.findValidator(targetType)
+
     getConfigurationStorage().addParam({
       type: 'eventBody',
       object,
       methodName,
       parameterIndex,
       resolve(event: any) {
-        return extractor ? extractor(event) : event
+        const arg: any = extractor ? extractor(event) : event
+        const validated = validatorConfig
+          ? validatorConfig.schema.validateSync(arg, {
+              abortEarly: false,
+              stripUnknown: true,
+            })
+          : arg
+
+        const obj = targetType ? plainToClass(targetType, validated) : arg
+
+        return obj
       },
     })
   }

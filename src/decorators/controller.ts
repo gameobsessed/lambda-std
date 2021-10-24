@@ -146,7 +146,7 @@ export abstract class RecordsControllerClass<
 
       try {
         for (const param of params) {
-          args[param.parameterIndex] = await param.resolve(event, context)
+          args[param.parameterIndex] = await param.resolve(record, context)
         }
 
         return await handler.apply(this.wrapper, args)
