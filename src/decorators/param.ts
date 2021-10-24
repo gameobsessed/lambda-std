@@ -111,3 +111,21 @@ export function Arguments(
     })
   }
 }
+
+export function EventBody(extractor?: (record: any) => any) {
+  return function (
+    object: Object,
+    methodName: string | symbol,
+    parameterIndex: number
+  ) {
+    getConfigurationStorage().addParam({
+      type: 'eventBody',
+      object,
+      methodName,
+      parameterIndex,
+      resolve(event: any) {
+        return extractor ? extractor(event) : event
+      },
+    })
+  }
+}

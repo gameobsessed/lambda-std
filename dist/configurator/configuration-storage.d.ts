@@ -1,6 +1,6 @@
 import { Context } from 'aws-lambda';
 import { AnyObjectSchema } from 'yup';
-export declare type ParamType = 'detail' | 'detailType' | 'argument';
+export declare type ParamType = 'detail' | 'detailType' | 'argument' | 'eventBody';
 export interface IParamConfiguration {
     type: ParamType;
     object: Object;
@@ -12,7 +12,7 @@ export interface IParamConfiguration {
 export interface IParam<T, R> extends IParamConfiguration {
     resolve(event: T, context: Context): Promise<R>;
 }
-export declare type HandlerType = 'handler' | 'query' | 'mutation';
+export declare type HandlerType = 'handler' | 'query' | 'mutation' | 'event';
 export interface IHandlerConfiguration {
     type: HandlerType;
     object: Object;

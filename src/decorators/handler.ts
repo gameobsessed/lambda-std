@@ -49,3 +49,19 @@ export function Mutation(fieldName?: string) {
     })
   }
 }
+
+export function Event(eventType?: string) {
+  return function (
+    object: Object,
+    methodName: string | symbol,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    descriptor: PropertyDescriptor
+  ) {
+    getConfigurationStorage().addHandler({
+      type: 'event',
+      object,
+      methodName,
+      route: eventType || methodName,
+    })
+  }
+}
