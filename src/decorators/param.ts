@@ -129,7 +129,7 @@ export function EventRecord(extractor?: (record: any) => any) {
       targetType && configurationStorage.findValidator(targetType)
 
     getConfigurationStorage().addParam({
-      type: 'eventBody',
+      type: 'eventRecord',
       object,
       methodName,
       parameterIndex,

@@ -1,7 +1,7 @@
 import { Context } from 'aws-lambda'
 import { AnyObjectSchema } from 'yup'
 
-export type ParamType = 'detail' | 'detailType' | 'argument' | 'eventBody'
+export type ParamType = 'detail' | 'detailType' | 'argument' | 'eventRecord'
 
 export interface IParamConfiguration {
   type: ParamType
