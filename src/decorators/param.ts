@@ -112,7 +112,7 @@ export function Arguments(
   }
 }
 
-export function EventBody(extractor?: (record: any) => any) {
+export function EventRecord(extractor?: (record: any) => any) {
   return function (
     object: Object,
     methodName: string | symbol,
