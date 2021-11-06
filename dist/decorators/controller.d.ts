@@ -1,5 +1,5 @@
 import { Context, AppSyncResolverEvent, EventBridgeEvent, S3Event, S3EventRecord } from 'aws-lambda';
-import { ConfigurationStorage } from '..';
+import { ConfigurationStorage, IHandlerConfiguration } from '..';
 export declare function Controller<T>(Wrapper: any): any;
 export declare abstract class EventControllerClass<W extends Record<string | symbol, any>, E> {
     protected configStorage: ConfigurationStorage;
@@ -7,8 +7,12 @@ export declare abstract class EventControllerClass<W extends Record<string | sym
     protected wrapper: W;
     protected initializer: any;
     protected initialized: boolean;
+    protected handlerConfig?: IHandlerConfiguration;
+    protected handlerArgs: any[];
+    protected _handler: (...args: any[]) => any;
     constructor(Wrapper: any);
     abstract getHandlerName(event: E): string;
+    prepare(event: E, context: Context): Promise<void>;
     handler(event: E, context: Context): Promise<any>;
 }
 export declare abstract class RecordsControllerClass<W extends Record<string | symbol, any>, E extends {
@@ -23,6 +27,7 @@ export declare class EventBridgeEventControllerClass extends EventControllerClas
 export declare function EventBridgeEventController(Wrapper: any): any;
 export declare class AppSyncResolverEventControllerClass extends EventControllerClass<any, AppSyncResolverEvent<any, any>> {
     getHandlerName(event: AppSyncResolverEvent<any, any>): string;
+    handler(event: AppSyncResolverEvent<any, any>, context: Context): Promise<any>;
 }
 export declare function AppSyncResolverEventController(Wrapper: any): any;
 export declare class S3EventControllerClass extends RecordsControllerClass<any, S3Event, S3EventRecord> {

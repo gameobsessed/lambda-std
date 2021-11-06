@@ -5,7 +5,11 @@ import {
   S3Event,
   S3EventRecord,
 } from 'aws-lambda'
-import { ConfigurationStorage, getConfigurationStorage } from '..'
+import {
+  ConfigurationStorage,
+  getConfigurationStorage,
+  IHandlerConfiguration,
+} from '..'
 
 export function Controller<T>(Wrapper: any) {
   const configStorage = getConfigurationStorage()
@@ -53,6 +57,9 @@ export abstract class EventControllerClass<
   protected wrapper: W
   protected initializer: any
   protected initialized: boolean = false
+  protected handlerConfig?: IHandlerConfiguration
+  protected handlerArgs: any[]
+  protected _handler: (...args: any[]) => any
 
   constructor(Wrapper: any) {
     this.configStorage = getConfigurationStorage()
@@ -65,9 +72,7 @@ export abstract class EventControllerClass<
 
   abstract getHandlerName(event: E): string
 
-  async handler(event: E, context: Context) {
-    console.debug('event: ', JSON.stringify(event, null, 2))
-
+  async prepare(event: E, context: Context) {
     if (!this.initialized && this.initializer) {
       await this.initializer.call(this.wrapper)
       this.initialized = true
@@ -75,10 +80,10 @@ export abstract class EventControllerClass<
 
     const handlerName = this.getHandlerName(event)
 
-    const handlerConfig = this.configStorage.findHandler(
+    const handlerConfig = (this.handlerConfig = this.configStorage.findHandler(
       this.Wrapper,
       handlerName
-    )
+    ))
 
     if (!handlerConfig) {
       throw new Error(
@@ -86,11 +91,13 @@ export abstract class EventControllerClass<
       )
     }
 
-    const handler = this.wrapper[handlerConfig.methodName]
+    this._handler = this.wrapper[handlerConfig.methodName]
     const params = this.configStorage.findParams(
       this.Wrapper,
       handlerConfig.methodName
     )
+
+    console.debug('prepare.params', JSON.stringify(params, null, 2))
 
     const args = []
 
@@ -98,12 +105,19 @@ export abstract class EventControllerClass<
       for (const param of params) {
         args[param.parameterIndex] = await param.resolve(event, context)
       }
-
-      return await handler.apply(this.wrapper, args)
     } catch (error) {
       // TODO: should be proper error handling mechanism depending on service
       console.error(error)
     }
+
+    this.handlerArgs = args
+  }
+
+  async handler(event: E, context: Context) {
+    console.debug('event: ', JSON.stringify(event, null, 2))
+    await this.prepare(event, context)
+
+    return await this._handler.apply(this.wrapper, this.handlerArgs)
   }
 }
 
@@ -179,6 +193,28 @@ export class AppSyncResolverEventControllerClass extends EventControllerClass<
 > {
   getHandlerName(event: AppSyncResolverEvent<any, any>) {
     return event.info?.fieldName
+  }
+
+  async handler(event: AppSyncResolverEvent<any, any>, context: Context) {
+    console.debug('event: ', JSON.stringify(event, null, 2))
+    await this.prepare(event, context)
+
+    if (!this.handlerConfig) {
+      console.warn('Handler config not found')
+
+      return
+    }
+
+    const { type } = this.handlerConfig
+
+    const result = await this._handler.apply(this.wrapper, this.handlerArgs)
+
+    return type === 'mutation'
+      ? {
+          __typename: result?.constructor?.name,
+          ...result,
+        }
+      : result
   }
 }
 
