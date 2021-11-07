@@ -101,13 +101,14 @@ export function Arguments(
         let validated
         try {
           validated = validatorConfig
-            ? validatorConfig.schema.validateSync(arg, {
+            ? await validatorConfig.schema.validate(arg, {
                 abortEarly: false,
                 stripUnknown: true,
               })
             : arg
         } catch (error) {
           console.warn('argument.resolve.error', error)
+          throw error
         }
 
         console.log(
