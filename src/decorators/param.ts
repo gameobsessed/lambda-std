@@ -92,18 +92,23 @@ export function Arguments(
       parameterIndex,
       parse: options?.parse ?? true,
       targetType,
-      resolve(event: AppSyncResolverEvent<any>) {
+      async resolve(event: AppSyncResolverEvent<any>) {
         console.log('argument.resolve.enter', JSON.stringify(event, null, 2))
         let arg: any = argumentName
           ? event.arguments[argumentName]
           : event.arguments
 
-        const validated = validatorConfig
-          ? validatorConfig.schema.validateSync(arg, {
-              abortEarly: false,
-              stripUnknown: true,
-            })
-          : arg
+        let validated
+        try {
+          validated = validatorConfig
+            ? validatorConfig.schema.validateSync(arg, {
+                abortEarly: false,
+                stripUnknown: true,
+              })
+            : arg
+        } catch (error) {
+          console.warn('argument.resolve.error', error)
+        }
 
         console.log(
           'argument.resolve.validated',
