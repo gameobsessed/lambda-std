@@ -191,6 +191,7 @@ export class AppSyncResolverEventControllerClass extends EventControllerClass<
       await this.prepare(event, context)
     } catch (error) {
       console.warn('handler.error', error)
+      throw error
     }
 
     console.debug(

@@ -1,5 +1,4 @@
 import { Context } from 'aws-lambda'
-import { AnyObjectSchema } from 'yup'
 
 export type ParamType = 'detail' | 'detailType' | 'argument' | 'eventRecord'
 
@@ -31,9 +30,13 @@ export interface IInitializerConfiguration {
   methodName: string | symbol
 }
 
+export interface IValidate {
+  (...args: any[]): Promise<any>
+}
+
 export interface IValidatorConfiguration {
   object: Object
-  schema: AnyObjectSchema
+  validate: IValidate
   options?: any
 }
 

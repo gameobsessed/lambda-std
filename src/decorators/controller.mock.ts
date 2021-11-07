@@ -1,4 +1,4 @@
-import { object, string } from 'yup'
+import * as Joi from 'joi'
 import {
   AppSyncResolverEventController,
   Arguments,
@@ -10,11 +10,16 @@ import {
   Validator,
 } from '..'
 
-const productInputSchema = object({
-  id: string().required(),
+const productInputSchema = Joi.object({
+  id: Joi.string().required(),
 })
 
-@Validator(productInputSchema)
+@Validator((input: any) =>
+  productInputSchema.validateAsync(input, {
+    abortEarly: false,
+    stripUnknown: true,
+  })
+)
 export class ProductInput {
   id: string
 }

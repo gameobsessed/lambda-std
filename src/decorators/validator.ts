@@ -1,11 +1,10 @@
-import type { AnyObjectSchema } from 'yup'
-import { getConfigurationStorage } from '..'
+import { getConfigurationStorage, IValidate } from '..'
 
-export function Validator(schema: AnyObjectSchema, options?: any) {
+export function Validator(validate: IValidate, options?: any) {
   return function (object: any) {
     getConfigurationStorage().addValidator({
       object,
-      schema,
+      validate,
       options,
     })
   }

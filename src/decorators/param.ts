@@ -31,10 +31,7 @@ export function Detail(options?: IDetailOptions) {
         let parsed: any = event.detail
 
         const validated = validatorConfig
-          ? validatorConfig.schema.validateSync(parsed, {
-              abortEarly: false,
-              stripUnknown: true,
-            })
+          ? await validatorConfig.validate(parsed)
           : parsed
 
         const obj = targetType
@@ -101,10 +98,7 @@ export function Arguments(
         let validated
         try {
           validated = validatorConfig
-            ? await validatorConfig.schema.validate(arg, {
-                abortEarly: false,
-                stripUnknown: true,
-              })
+            ? await validatorConfig.validate(arg)
             : arg
         } catch (error) {
           console.warn('argument.resolve.error', error)
@@ -145,13 +139,10 @@ export function EventRecord(extractor?: (record: any) => any) {
       object,
       methodName,
       parameterIndex,
-      resolve(event: any) {
+      async resolve(event: any) {
         const arg: any = extractor ? extractor(event) : event
         const validated = validatorConfig
-          ? validatorConfig.schema.validateSync(arg, {
-              abortEarly: false,
-              stripUnknown: true,
-            })
+          ? await validatorConfig.validate(arg)
           : arg
 
         const obj = targetType ? plainToClass(targetType, validated) : arg

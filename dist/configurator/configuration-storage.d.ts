@@ -1,5 +1,4 @@
 import { Context } from 'aws-lambda';
-import { AnyObjectSchema } from 'yup';
 export declare type ParamType = 'detail' | 'detailType' | 'argument' | 'eventRecord';
 export interface IParamConfiguration {
     type: ParamType;
@@ -24,9 +23,12 @@ export interface IInitializerConfiguration {
     object: Object;
     methodName: string | symbol;
 }
+export interface ValidatorSchema {
+    validate: (...args: any[]) => Promise<any>;
+}
 export interface IValidatorConfiguration {
     object: Object;
-    schema: AnyObjectSchema;
+    schema: ValidatorSchema;
     options?: any;
 }
 export declare class ConfigurationStorage {

@@ -1,2 +1,2 @@
-import type { AnyObjectSchema } from 'yup';
-export declare function Validator(schema: AnyObjectSchema, options?: any): (object: any) => void;
+import { ValidatorSchema } from '..';
+export declare function Validator(schema: ValidatorSchema, options?: any): (object: any) => void;
