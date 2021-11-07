@@ -219,8 +219,9 @@ export class AppSyncResolverEventControllerClass extends EventControllerClass<
 
 export function AppSyncResolverEventController(Wrapper: any) {
   const controller = new AppSyncResolverEventControllerClass(Wrapper)
+  const handler = controller.handler.bind(controller)
 
-  return controller.handler.bind(controller) as any
+  return (async (...args: [any, any]) => await handler(...args)) as any
 }
 
 export class S3EventControllerClass extends RecordsControllerClass<
