@@ -91,19 +91,13 @@ export function Arguments(
       targetType,
       async resolve(event: AppSyncResolverEvent<any>) {
         console.log('argument.resolve.enter', JSON.stringify(event, null, 2))
-        let arg: any = argumentName
+        const arg: any = argumentName
           ? event.arguments[argumentName]
           : event.arguments
 
-        let validated
-        try {
-          validated = validatorConfig
-            ? await validatorConfig.validate(arg)
-            : arg
-        } catch (error) {
-          console.warn('argument.resolve.error', error)
-          throw error
-        }
+        const validated = validatorConfig
+          ? await validatorConfig.validate(arg)
+          : arg
 
         console.log(
           'argument.resolve.validated',

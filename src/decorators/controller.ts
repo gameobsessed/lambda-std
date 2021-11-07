@@ -187,12 +187,8 @@ export class AppSyncResolverEventControllerClass extends EventControllerClass<
 
   async handler(event: AppSyncResolverEvent<any, any>, context: Context) {
     console.debug('event: ', JSON.stringify(event, null, 2))
-    try {
-      await this.prepare(event, context)
-    } catch (error) {
-      console.warn('handler.error', error)
-      throw error
-    }
+
+    await this.prepare(event, context)
 
     console.debug(
       'prepared: ',
