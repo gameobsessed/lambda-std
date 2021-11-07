@@ -92,7 +92,8 @@ export function Arguments(
       parameterIndex,
       parse: options?.parse ?? true,
       targetType,
-      async resolve(event: AppSyncResolverEvent<any>) {
+      resolve(event: AppSyncResolverEvent<any>) {
+        console.log('argument.resolve.enter', JSON.stringify(event, null, 2))
         let arg: any = argumentName
           ? event.arguments[argumentName]
           : event.arguments
@@ -103,6 +104,11 @@ export function Arguments(
               stripUnknown: true,
             })
           : arg
+
+        console.log(
+          'argument.resolve.validated',
+          JSON.stringify(validated, null, 2)
+        )
 
         const obj = targetType ? plainToClass(targetType, validated) : arg
 
