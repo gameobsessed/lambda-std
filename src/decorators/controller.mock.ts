@@ -1,17 +1,34 @@
+import { object, string } from 'yup'
 import {
   AppSyncResolverEventController,
   Arguments,
   Detail,
   DetailType,
   EventBridgeEventController,
+  Mutation,
   Query,
+  Validator,
 } from '..'
+
+const productInputSchema = object({
+  id: string().required(),
+})
+
+@Validator(productInputSchema)
+export class ProductInput {
+  id: string
+}
 
 @AppSyncResolverEventController
 export class ProductController {
   @Query()
   async getProduct(@Arguments('id') id: string) {
     return id
+  }
+
+  @Mutation()
+  async createProduct(@Arguments('input') input: ProductInput) {
+    return input
   }
 }
 

@@ -101,13 +101,8 @@ export abstract class EventControllerClass<
 
     const args = []
 
-    try {
-      for (const param of params) {
-        args[param.parameterIndex] = await param.resolve(event, context)
-      }
-    } catch (error) {
-      // TODO: should be proper error handling mechanism depending on service
-      console.error(error)
+    for (const param of params) {
+      args[param.parameterIndex] = await param.resolve(event, context)
     }
 
     this.handlerArgs = args
@@ -158,16 +153,11 @@ export abstract class RecordsControllerClass<
 
       const args = []
 
-      try {
-        for (const param of params) {
-          args[param.parameterIndex] = await param.resolve(record, context)
-        }
-
-        return await handler.apply(this.wrapper, args)
-      } catch (error) {
-        // TODO: should be proper error handling mechanism depending on service
-        console.error(error)
+      for (const param of params) {
+        args[param.parameterIndex] = await param.resolve(record, context)
       }
+
+      return await handler.apply(this.wrapper, args)
     }
   }
 }

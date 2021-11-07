@@ -21,6 +21,43 @@ describe('controller', () => {
     expect(result).toBe(id)
   })
 
+  it('should call appsync controller mutation', async () => {
+    const id = 'uuid'
+    const event: Partial<AppSyncResolverEvent<any>> = {
+      info: {
+        fieldName: 'createProduct',
+      } as any,
+      arguments: {
+        input: {
+          id,
+        },
+      },
+    }
+
+    const result = await caller<any, { game: any; type: any }>(
+      ProductController
+    )(event)
+
+    expect(((result as unknown) as { id: string }).id).toBe(id)
+  })
+
+  it('should throw error from appsync controller mutation', async () => {
+    const event: Partial<AppSyncResolverEvent<any>> = {
+      info: {
+        fieldName: 'createProduct',
+      } as any,
+      arguments: {
+        input: {},
+      },
+    }
+
+    const result = caller<any, { game: any; type: any }>(
+      ProductController
+    )(event)
+
+    await expect(async () => await result).rejects.toThrow()
+  })
+
   it('should create event bridge controller for update', async () => {
     const game = {
       id: 'gameId',
