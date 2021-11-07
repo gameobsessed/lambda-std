@@ -189,6 +189,15 @@ export class AppSyncResolverEventControllerClass extends EventControllerClass<
     console.debug('event: ', JSON.stringify(event, null, 2))
     await this.prepare(event, context)
 
+    console.debug(
+      'prepared: ',
+      JSON.stringify(
+        { handler: this._handler, args: this.handlerArgs },
+        null,
+        2
+      )
+    )
+
     if (!this.handlerConfig) {
       console.warn('Handler config not found')
 
