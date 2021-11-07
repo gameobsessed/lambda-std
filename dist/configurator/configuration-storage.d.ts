@@ -23,12 +23,12 @@ export interface IInitializerConfiguration {
     object: Object;
     methodName: string | symbol;
 }
-export interface ValidatorSchema {
-    validate: (...args: any[]) => Promise<any>;
+export interface IValidate {
+    (...args: any[]): Promise<any>;
 }
 export interface IValidatorConfiguration {
     object: Object;
-    schema: ValidatorSchema;
+    validate: IValidate;
     options?: any;
 }
 export declare class ConfigurationStorage {

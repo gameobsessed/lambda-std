@@ -1,2 +1,2 @@
-import { ValidatorSchema } from '..';
-export declare function Validator(schema: ValidatorSchema, options?: any): (object: any) => void;
+import { IValidate } from '..';
+export declare function Validator(validate: IValidate, options?: any): (object: any) => void;
