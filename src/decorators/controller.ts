@@ -110,9 +110,16 @@ export abstract class EventControllerClass<
 
   async handler(event: E, context: Context) {
     console.debug('event: ', JSON.stringify(event, null, 2))
-    await this.prepare(event, context)
+    let result
 
-    return await this._handler.apply(this.wrapper, this.handlerArgs)
+    try {
+      await this.prepare(event, context)
+      result = await this._handler.apply(this.wrapper, this.handlerArgs)
+    } catch (error) {
+      console.error(error)
+    }
+
+    return result
   }
 }
 
