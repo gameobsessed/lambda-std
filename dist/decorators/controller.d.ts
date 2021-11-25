@@ -19,7 +19,7 @@ export declare abstract class RecordsControllerClass<W extends Record<string | s
     Records: R[];
 }, R> extends EventControllerClass<W, E> {
     abstract getRecordHandlerName(event: R): string;
-    recordsHandler(event: E, context: Context): Promise<any>;
+    recordsHandler(event: E, context: Context): Promise<void>;
 }
 export declare class EventBridgeEventControllerClass extends EventControllerClass<any, EventBridgeEvent<string, any>> {
     getHandlerName(event: EventBridgeEvent<any, any>): any;
