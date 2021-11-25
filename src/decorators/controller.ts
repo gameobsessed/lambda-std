@@ -219,7 +219,7 @@ export class AppSyncResolverEventControllerClass extends EventControllerClass<
     try {
       result = await this._handler.apply(this.wrapper, this.handlerArgs)
     } catch (error) {
-      console.error('ERROR: ', error)
+      throw error
     }
 
     return type === 'mutation'
