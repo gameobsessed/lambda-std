@@ -235,7 +235,14 @@ export function AppSyncResolverEventController(Wrapper: any) {
   const controller = new AppSyncResolverEventControllerClass(Wrapper)
   const handler = controller.handler.bind(controller)
 
-  return (async (...args: [any, any]) => await handler(...args)) as any
+  return async function executeHandler(...args: [any, any]) {
+    try {
+      await handler(...args)
+    } catch (error) {
+      console.debug('Execute Handler Error')
+      throw error
+    }
+  } as any
 }
 
 export class S3EventControllerClass extends RecordsControllerClass<
