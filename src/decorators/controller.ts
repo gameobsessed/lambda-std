@@ -164,7 +164,7 @@ export abstract class RecordsControllerClass<
         args[param.parameterIndex] = await param.resolve(record, context)
       }
 
-      return await handler.apply(this.wrapper, args)
+      await handler.apply(this.wrapper, args)
     }
   }
 }
@@ -214,13 +214,7 @@ export class AppSyncResolverEventControllerClass extends EventControllerClass<
 
     const { type } = this.handlerConfig
 
-    let result
-
-    try {
-      result = await this._handler.apply(this.wrapper, this.handlerArgs)
-    } catch (error) {
-      throw error
-    }
+    const result = await this._handler.apply(this.wrapper, this.handlerArgs)
 
     return type === 'mutation'
       ? {
@@ -236,12 +230,15 @@ export function AppSyncResolverEventController(Wrapper: any) {
   const handler = controller.handler.bind(controller)
 
   return async function executeHandler(...args: [any, any]) {
+    let result
     try {
-      await handler(...args)
+      result = await handler(...args)
     } catch (error) {
       console.debug('Execute Handler Error')
       throw error
     }
+
+    return result
   } as any
 }
 
