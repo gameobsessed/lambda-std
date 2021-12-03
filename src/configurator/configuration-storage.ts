@@ -1,6 +1,11 @@
 import { Context } from 'aws-lambda'
 
-export type ParamType = 'detail' | 'detailType' | 'argument' | 'eventRecord'
+export type ParamType =
+  | 'detail'
+  | 'detailType'
+  | 'argument'
+  | 'source'
+  | 'eventRecord'
 
 export interface IParamConfiguration {
   type: ParamType
