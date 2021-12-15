@@ -30,9 +30,10 @@
     "aws-sdk-v3"
   ],
   "dependencies": {
-    "class-transformer": "^0.5.1",
-    "source-map-support": "^0.5.16",
-    "uuid": "^8.3.2"
+    "class-transformer": "0.5.1",
+    "ix": "4.5.2",
+    "source-map-support": "0.5.16",
+    "uuid": "8.3.2"
   },
   "devDependencies": {
     "@commitlint/cli": "15.0.0",

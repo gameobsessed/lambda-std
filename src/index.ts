@@ -13,7 +13,7 @@ export function caller<T, R>(input: unknown) {
 }
 
 export * from './configurator/configuration-storage'
-export * from './decorators/controller'
+export * from './decorators/controllers'
 export * from './decorators/handler'
 export * from './decorators/initializer'
 export * from './decorators/param'
