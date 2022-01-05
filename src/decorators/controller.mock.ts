@@ -5,6 +5,7 @@ import {
   Detail,
   DetailType,
   EventBridgeEventController,
+  Initializer,
   Mutation,
   Query,
   Validator,
@@ -24,7 +25,7 @@ export class ProductInput {
   id: string
 }
 
-@AppSyncResolverEventController
+@AppSyncResolverEventController()
 export class ProductController {
   @Query()
   async getProduct(@Arguments('id') id: string) {
@@ -46,7 +47,7 @@ export class Game {
   }
 }
 
-@EventBridgeEventController
+@EventBridgeEventController()
 export class GameController {
   @DetailType('GAME_UPDATED')
   async updateGame(@Detail() product: Game) {

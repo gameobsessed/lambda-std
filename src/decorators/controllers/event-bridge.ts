@@ -1,5 +1,6 @@
 import { EventBridgeEvent } from 'aws-lambda'
 import { EventControllerClass, IUserControllerCtor } from './controller'
+import { defaultErrorHandler, IErrorHandler } from './error-handler'
 
 export class EventBridgeEventControllerClass extends EventControllerClass<
   EventBridgeEvent<string, any>
@@ -9,10 +10,29 @@ export class EventBridgeEventControllerClass extends EventControllerClass<
   }
 }
 
-export function EventBridgeEventController(
-  UserControllerCtor: IUserControllerCtor
-) {
-  const controller = new EventBridgeEventControllerClass(UserControllerCtor)
+export interface IEventBridgeEventControllerParams {
+  errorHandler?: IErrorHandler<any>
+}
 
-  return controller.handle.bind(controller) as any
+export function EventBridgeEventController({
+  errorHandler = defaultErrorHandler,
+}: IEventBridgeEventControllerParams = {}) {
+  return function EventBridgeEventController(
+    UserControllerCtor: IUserControllerCtor
+  ) {
+    const controller = new EventBridgeEventControllerClass(UserControllerCtor)
+    const handler = controller.handle.bind(controller) as any
+
+    return async function executeEventBridgeEventHandler(...args: [any, any]) {
+      let result
+
+      try {
+        result = await handler(...args)
+      } catch (error) {
+        return errorHandler(error)
+      }
+
+      return result
+    } as any
+  }
 }

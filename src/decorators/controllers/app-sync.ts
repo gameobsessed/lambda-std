@@ -1,5 +1,6 @@
 import { AppSyncResolverEvent, Context } from 'aws-lambda'
 import { EventControllerClass, IUserControllerCtor } from './controller'
+import { defaultErrorHandler, IErrorHandler } from './error-handler'
 
 export class AppSyncResolverEventControllerClass extends EventControllerClass<
   AppSyncResolverEvent<any, any>
@@ -24,20 +25,31 @@ export class AppSyncResolverEventControllerClass extends EventControllerClass<
   }
 }
 
-export function AppSyncResolverEventController(UserController: IUserControllerCtor) {
-  const controller = new AppSyncResolverEventControllerClass(UserController)
-  const handler = controller.handle.bind(controller)
+export interface IAppSyncResolverEventControllerParams {
+  errorHandler?: IErrorHandler<any>
+}
 
-  return async function executeHandler(...args: [any, any]) {
-    let result
+export function AppSyncResolverEventController({
+  errorHandler = defaultErrorHandler,
+}: IAppSyncResolverEventControllerParams = {}) {
+  return function AppSyncResolverEventController(
+    UserController: IUserControllerCtor
+  ) {
+    const controller = new AppSyncResolverEventControllerClass(UserController)
+    const handler = controller.handle.bind(controller)
 
-    try {
-      result = await handler(...args)
-    } catch (error) {
-      console.debug('Execute Handler Error')
-      throw error
-    }
+    return async function executeAppSyncResolverEventHandler(
+      ...args: [any, any]
+    ) {
+      let result
 
-    return result
-  } as any
+      try {
+        result = await handler(...args)
+      } catch (error) {
+        return errorHandler(error)
+      }
+
+      return result
+    } as any
+  }
 }
