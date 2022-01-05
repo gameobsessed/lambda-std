@@ -38,7 +38,7 @@ describe('controller', () => {
       ProductController
     )(event)
 
-    expect(((result as unknown) as { id: string }).id).toBe(id)
+    expect((result as unknown as { id: string }).id).toBe(id)
   })
 
   it('should throw error from appsync controller mutation', async () => {
@@ -51,9 +51,9 @@ describe('controller', () => {
       },
     }
 
-    const result = caller<any, { game: any; type: any }>(
-      ProductController
-    )(event)
+    const result = caller<any, { game: any; type: any }>(ProductController)(
+      event
+    )
 
     await expect(async () => await result).rejects.toThrow()
   })
