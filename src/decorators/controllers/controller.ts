@@ -129,6 +129,8 @@ export abstract class RecordsControllerClass<
   async handleRecords(input: E, ctx: Context) {
     await this.initialize()
 
+    console.debug('event: ', JSON.stringify(input, null, 2))
+
     for (const record of input.Records) {
       const params = await this.preprocessRecord(record, ctx)
       const handler = this.userController[this.handlerConfig!.methodName]

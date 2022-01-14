@@ -8,7 +8,10 @@ import {
   Initializer,
   Mutation,
   Query,
+  S3EventController,
   Validator,
+  Event,
+  EventRecord,
 } from '..'
 
 const productInputSchema = Joi.object({
@@ -58,5 +61,13 @@ export class GameController {
   async publishGame(@Detail() product: Game) {
     product.setStatus('published')
     return product
+  }
+}
+
+@S3EventController()
+export class ImageController {
+  @Event('ObjectCreated:Copy', 'ObjectCreated:Put')
+  async createImage(@EventRecord() record: any) {
+    return record
   }
 }

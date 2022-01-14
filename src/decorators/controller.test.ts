@@ -1,6 +1,15 @@
-import { AppSyncResolverEvent, EventBridgeEvent } from 'aws-lambda'
+import {
+  AppSyncResolverEvent,
+  EventBridgeEvent,
+  S3CreateEvent,
+} from 'aws-lambda'
 import { caller } from '..'
-import { Game, GameController, ProductController } from './controller.mock'
+import {
+  Game,
+  GameController,
+  ImageController,
+  ProductController,
+} from './controller.mock'
 
 describe('controller', () => {
   it('should create appsync controller', async () => {
@@ -90,5 +99,20 @@ describe('controller', () => {
 
     expect(result).toEqual({ ...game, status: 'published' })
     expect(result).toBeInstanceOf(Game)
+  })
+
+  it('should create s3 records controller', async () => {
+    const s3Event: S3CreateEvent = {
+      Records: [
+        { eventName: 'ObjectCreated:Copy' },
+        { eventName: 'ObjectCreated:Put' },
+      ],
+    } as any
+
+    const result = await caller<any, { game: any; type: any }>(ImageController)(
+      s3Event
+    )
+
+    expect(result).toBeUndefined()
   })
 })
