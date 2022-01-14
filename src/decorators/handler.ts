@@ -50,18 +50,20 @@ export function Mutation(fieldName?: string) {
   }
 }
 
-export function Event(eventType?: string) {
+export function Event(...eventTypes: string[]) {
   return function (
     object: Object,
     methodName: string | symbol,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     descriptor: PropertyDescriptor
   ) {
-    getConfigurationStorage().addHandler({
-      type: 'event',
-      object,
-      methodName,
-      route: eventType || methodName,
-    })
+    for (const eventType of [...eventTypes, methodName]) {
+      getConfigurationStorage().addHandler({
+        type: 'event',
+        object,
+        methodName,
+        route: eventType,
+      })
+    }
   }
 }
