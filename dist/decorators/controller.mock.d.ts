@@ -14,3 +14,6 @@ export declare class GameController {
     updateGame(product: Game): Promise<Game>;
     publishGame(product: Game): Promise<Game>;
 }
+export declare class ImageController {
+    createImage(record: any): Promise<any>;
+}
