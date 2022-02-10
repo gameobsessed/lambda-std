@@ -36,7 +36,7 @@
     "uuid": "8.3.2"
   },
   "devDependencies": {
-    "@commitlint/cli": "16.0.1",
+    "@commitlint/cli": "16.1.0",
     "@commitlint/config-conventional": "16.0.0",
     "@commitlint/top-level": "16.0.0",
     "@types/aws-lambda": "8.10.92",
